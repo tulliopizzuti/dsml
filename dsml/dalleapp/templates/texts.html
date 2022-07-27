@@ -1,9 +1,199 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block head %}
 <meta name="menu" value="texts" />
-
+<link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.3.0/css/responsive.dataTables.min.css">
 {% endblock %}
-{% block content %}
-<h1>texts</h1>
 
+
+{% block content %}
+<section class="section">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title d-inline-block">Artisti</h4>
+            <a class="btn btn-primary d-inline-block float-end" onClick="insertNewText()">Inserisci</a>
+            <hr />
+            <div class="row justify-content-end mt-1">
+                <div class="col-4">
+                    <div class="form-group">
+                        <label>Filtro</label>
+                        <select class="form-select" id="tablefield_select">
+                            <option value="descrizione">Descrizione</option>
+                            <option value="testo">Testo</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+
+            <table class="table" id="table" class="display responsive nowrap" style="width:100%">
+
+            </table>
+        </div>
+    </div>
+</section>
+<div class="modal fade" id="modaltext" tabindex="-1" aria-labelledby="textModal" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body-container">
+                <div class="modal-body">
+                    <input type="hidden" class="form-control" id="modal-id">
+                    <form id="modal-form">
+                        <div class="mb-3">
+                            <label for="modal-descrizione" class="col-form-label">Descrizione</label>
+                            <input type="text" required class="form-control" id="modal-descrizione">
+                        </div>
+                        <div class="mb-3">
+                            <label for="modal-testo" class="col-form-label">Testo</label>
+                            <textarea rows="15" required class="form-control" id="modal-testo"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" form="modal-form">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="{% static 'js/table.js' %}"></script>
+<script type="text/javascript">
+    var url = "/texts/api";
+
+    var table;
+    var modalSpinnerSelector = "#modaltext .modal-body-container";
+    function loadTextData(id) {
+        startSpinner(modalSpinnerSelector);
+        $('#modaltext').modal('show');
+        $.ajax({
+            url: url + "/" + id,
+            success: (data) => successLoadText(data.data, "Edit")
+        });
+    }
+    function successLoadText(data, title) {
+        $('#modal-testo').val(data.testo);
+        $('#modal-descrizione').val(data.descrizione);
+        $('#modal-id').val(data.id);
+        $('#modalTitle').text(title);
+        stopSpinner(modalSpinnerSelector);
+    }
+
+    function insertNewText() {
+        successLoadText({
+            "testo": "",
+            "descrizione": "",
+            "id": ""
+        }, "Insert");
+        $('#modaltext').modal('show');
+    }
+    function reloadTable() {
+        table.ajax.reload();
+    }
+    $("#modal-form").submit(function (event) {
+        event.preventDefault();
+        saveTextData();
+    });
+    function saveTextData() {
+        startSpinner(modalSpinnerSelector);
+
+        var testo = $('#modal-testo').val();
+        var descrizione = $('#modal-descrizione').val();
+        var id = $('#modal-id').val();
+        if (id) {
+            url += ("/" + id);
+        }
+        $.post(url, { "testo": testo, "descrizione": descrizione }).done(function (data) {
+            stopSpinner(modalSpinnerSelector);
+            $('#modaltext').modal('hide');
+            Swal.fire(
+                'Good job!',
+                'Success!',
+                'success'
+            )
+            reloadTable();
+        }).fail(function (data) {
+            stopSpinner(modalSpinnerSelector);
+            Swal.fire(
+                'Oops...!',
+                'Something went wrong!',
+                'error'
+            )
+        });
+    }
+    function deleteTextData(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                $.ajax({
+                    url: url + "/" + id,
+                    type: 'DELETE',
+                    success: function () {
+                        Swal.fire(
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                        )
+                        reloadTable();
+                    }
+                });
+
+
+
+            }
+        })
+    }
+
+
+
+
+    $(document).ready(function () {
+        $('#tablefield_select').on("change", function () {
+            reloadTable();
+        });
+        table = $("#table").customTable({
+            order: [0, 'asc'],
+            url: url,
+            fieldName: function () { return $('#tablefield_select').val(); },
+            columns: [
+                { data: 'descrizione' },
+                { data: 'testo', className: "ellipsis" },
+                { data: 'id', className: "text-center" },
+            ],
+            columnsName: [
+                "Descrizione", "Testo", "Visualizza"
+            ],
+            placeHolder: "Testo",
+            columnDefs: [
+                {
+                    targets: -1,
+                    data: "id",
+                    render: function (data, type, row, meta) {
+                        return '<a type="button" class="btn btn-primary" onClick="loadTextData(\'' + data + '\')">Dettagli</a><a type="button" class="btn btn-danger" onClick="deleteTextData(\'' + data + '\')">Elimina</a>';
+                    }
+                },
+            ]
+        });
+    });
+</script>
 {% endblock %}

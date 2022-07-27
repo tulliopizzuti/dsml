@@ -1,0 +1,10 @@
+.ellipsis {
+    max-width: 50%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+table.table{
+    table-layout: fixed;
+}
+
