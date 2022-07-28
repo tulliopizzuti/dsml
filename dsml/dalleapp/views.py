@@ -1,3 +1,4 @@
+from lib2to3.pgen2.tokenize import tokenize
 from django.shortcuts import render
 from .models import Text
 from rest_framework.views import APIView
@@ -6,8 +7,8 @@ from rest_framework import status
 from .serializers import TextSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.shortcuts import get_object_or_404
-
-
+import nltk
+nltk.download('punkt')
 # Create your views here.
 
 
@@ -43,6 +44,7 @@ class TextListApiView(APIView):
         return Response({"status": "success", "data": "Item Deleted"})
 
     def get(self, request, id=None):
+        summarization = request.query_params.get("summarization")
         if id:
             item = Text.objects.get(id=id)
         else:
@@ -76,11 +78,15 @@ class TextListApiView(APIView):
                 item = item.values()
 
         serializer = TextSerializer(item, many=(False if id else True))
+        
         result = {
             "status": "success",
             "data": serializer.data
         }
+        if(summarization):
+            print(summarization)
         if(not id):
             result["recordsTotal"]=len(item)
             result["recordsFiltered"]=len(item)
         return Response(result, status=status.HTTP_200_OK)
+

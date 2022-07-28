@@ -1,0 +1,6 @@
+https://github.com/thunlp/TensorFlow-Summarization
+https://github.com/dongjun-Lee/text-summarization-tensorflow
+https://tfhub.dev/google/bertseq2seq/roberta24_gigaword/1
+https://tfhub.dev/google/bertseq2seq/roberta24_cnndm/1
+https://tfhub.dev/google/bertseq2seq/roberta24_bbc/1
+https://github.com/miso-belica/sumy/blob/main/docs/summarizators.md

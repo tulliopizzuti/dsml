@@ -112,10 +112,8 @@
         var testo = $('#modal-testo').val();
         var descrizione = $('#modal-descrizione').val();
         var id = $('#modal-id').val();
-        if (id) {
-            url += ("/" + id);
-        }
-        $.post(url, { "testo": testo, "descrizione": descrizione }).done(function (data) {
+        
+        $.post(id?url + ("/" + id):url, { "testo": testo, "descrizione": descrizione }).done(function (data) {
             stopSpinner(modalSpinnerSelector);
             $('#modaltext').modal('hide');
             Swal.fire(

@@ -11,4 +11,5 @@ urlpatterns=[
     path('texts/api/<int:id>', views.TextListApiView.as_view()),
     path('wordtree',views.wordtree,name='wordtree'),
 
+
 ]
