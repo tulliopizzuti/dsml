@@ -9,6 +9,11 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.shortcuts import get_object_or_404
 import nltk
 nltk.download('punkt')
+
+
+
+
+
 # Create your views here.
 
 
