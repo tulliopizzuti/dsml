@@ -7,11 +7,18 @@ from rest_framework import status
 from .serializers import TextSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.shortcuts import get_object_or_404
-import nltk
-nltk.download('punkt')
 
+from nltk.tokenize import word_tokenize
+from transformers import pipeline
 
+from django.conf import settings
 
+import os
+
+model_name = "facebook/bart-large-cnn"
+#https://huggingface.co/models?pipeline_tag=summarization&sort=downloads
+#https://huggingface.co/docs/transformers/v4.21.0/en/main_classes/pipelines#transformers.SummarizationPipeline
+summarizer = pipeline("summarization", model=model_name)
 
 
 # Create your views here.
@@ -83,15 +90,26 @@ class TextListApiView(APIView):
                 item = item.values()
 
         serializer = TextSerializer(item, many=(False if id else True))
-        
+
         result = {
             "status": "success",
             "data": serializer.data
         }
-        if(summarization):
-            print(summarization)
-        if(not id):
-            result["recordsTotal"]=len(item)
-            result["recordsFiltered"]=len(item)
-        return Response(result, status=status.HTTP_200_OK)
+        if(id and summarization == "true"):
 
+            summarizer = pipeline(
+                "summarization",
+                model=model_name
+            )
+            article=result["data"]["testo"]
+            wordCount=len(word_tokenize(article))
+            maxLen=(wordCount/4)*3
+            print(maxLen)
+            summ = summarizer(article, min_length=1, max_length=maxLen)
+            out = summ[0]["summary_text"]
+            result["data"]["testo"] = out
+
+        if(not id):
+            result["recordsTotal"] = len(item)
+            result["recordsFiltered"] = len(item)
+        return Response(result, status=status.HTTP_200_OK)

@@ -4,3 +4,6 @@ https://tfhub.dev/google/bertseq2seq/roberta24_gigaword/1
 https://tfhub.dev/google/bertseq2seq/roberta24_cnndm/1
 https://tfhub.dev/google/bertseq2seq/roberta24_bbc/1
 https://github.com/miso-belica/sumy/blob/main/docs/summarizators.md
+https://www.edlitera.com/blog/posts/text-summarization-nlp-how-to#:~:text=The%20main%20types%20of%20text,Abstractive%20summarization
+https://www.turing.com/kb/5-powerful-text-summarization-techniques-in-python
+https://huggingface.co/models?pipeline_tag=summarization&sort=downloads
