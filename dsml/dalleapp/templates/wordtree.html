@@ -51,12 +51,11 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalTitle"></h5>
+                <h5 class="modal-title" id="modalTitle">Testo</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body-container">
                 <div class="modal-body">
-                    <input type="hidden" class="form-control" id="modal-id">
                     <form id="modal-form">
                         <div class="mb-3">
                             <label for="modal-descrizione" class="col-form-label">Descrizione</label>
@@ -78,7 +77,31 @@
     </div>
 </div>
 
+<div class="modal fade" id="modalextract" tabindex="-1" aria-labelledby="extractModal" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Genera immagine</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body-container">
+                <div class="modal-body">
+                    <form id="modal-form">
+                        <div class="mb-3">
+                            <label for="modal-extract-text" class="col-form-label">Testo</label>
+                            <textarea rows="7" required class="form-control" id="modal-extract-text"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
 
+            </div>
+
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block footer %}
@@ -145,7 +168,8 @@
             wordtree: {
                 type: $('#double').prop("checked") ? 'double' : 'suffix',
                 format: 'implicit',
-                word: $('#keyword').val()
+                word: $('#keyword').val(),
+                wordSeparator:/([!?,;:.&"-]+|\S*[A-Z]\.|\S*(?:[^:\s&-]))/
             }
         };
         chart = new google.visualization.WordTree(document.getElementById('wt'));
@@ -178,7 +202,10 @@
                 return a.x - b.x;
             })
             .map(function () { return this.text });
-        console.log(text.toArray().join(" "));
+        text=(text.toArray().join(" "));
+        console.log(text);
+        $('#modal-extract-text').val(text);
+        $('#modalextract').modal('show');
     }
 
     $('#keyword').on("change", function () {
