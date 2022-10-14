@@ -20,3 +20,10 @@ table.table{
     z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
     cursor: pointer; /* Add a pointer on hover */
   }
+  .carousel-inner > .carousel-item > img {
+    width:auto;
+    height:360px;
+  }
+  .carousel-inner > .carousel-item  {
+    text-align: center;
+  }

@@ -16,6 +16,7 @@ from dalle2 import Dalle2
 from django.conf import settings
 
 import os
+import json
 
 model_name = "facebook/bart-large-cnn"
 #https://huggingface.co/models?pipeline_tag=summarization&sort=downloads
@@ -57,7 +58,9 @@ class Dalle2ApiView(APIView):
     def get(self, request, id=None):
         text = request.query_params.get("text")
         dalle = Dalle2("sess-m5P8qcas7Sv7A5vq2OiAvw9iJmmpW99IdMv5q0kB") 
-        generations = dalle.generate(text)
+        #generations = dalle.generate(text)
+        j='[{"id":"generation-Gygq603zRr3MqxTFVo6J7Z1F","object":"generation","created":1665753021,"generation_type":"ImageGeneration","generation":{"image_path":"https://openailabsprodscus.blob.core.windows.net/private/user-jUu7fCE5KYKhGHCL5HWVPj6M/generations/generation-Gygq603zRr3MqxTFVo6J7Z1F/image.webp?st=2022-10-14T12%3A11%3A26Z&se=2022-10-14T14%3A09%3A26Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/webp&skoid=15f0b47b-a152-4599-9e98-9cb4a58269f8&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2022-10-14T08%3A49%3A33Z&ske=2022-10-21T08%3A49%3A33Z&sks=b&skv=2021-08-06&sig=m7ShuVKK4IaTaB94KJmUsNXSM5npMdWoNbvCVnWKawo%3D"},"task_id":"task-ZO7nOIr7x1uaNJ3aDzm9T5Hb","prompt_id":"prompt-zOy14wn8xv50G8WCwXfq76Vz","is_public":false},{"id":"generation-0mWV2IFHtM5hoQvmEGGwgDjC","object":"generation","created":1665753021,"generation_type":"ImageGeneration","generation":{"image_path":"https://openailabsprodscus.blob.core.windows.net/private/user-jUu7fCE5KYKhGHCL5HWVPj6M/generations/generation-0mWV2IFHtM5hoQvmEGGwgDjC/image.webp?st=2022-10-14T12%3A11%3A26Z&se=2022-10-14T14%3A09%3A26Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/webp&skoid=15f0b47b-a152-4599-9e98-9cb4a58269f8&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2022-10-14T08%3A49%3A33Z&ske=2022-10-21T08%3A49%3A33Z&sks=b&skv=2021-08-06&sig=bpTwAN5aY060jcvvm8fuy%2B4armwyWyHA3IAF6LArPuA%3D"},"task_id":"task-ZO7nOIr7x1uaNJ3aDzm9T5Hb","prompt_id":"prompt-zOy14wn8xv50G8WCwXfq76Vz","is_public":false},{"id":"generation-1DFxjeMUWYNjmNSbNr7SpzrK","object":"generation","created":1665753022,"generation_type":"ImageGeneration","generation":{"image_path":"https://openailabsprodscus.blob.core.windows.net/private/user-jUu7fCE5KYKhGHCL5HWVPj6M/generations/generation-1DFxjeMUWYNjmNSbNr7SpzrK/image.webp?st=2022-10-14T12%3A11%3A26Z&se=2022-10-14T14%3A09%3A26Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/webp&skoid=15f0b47b-a152-4599-9e98-9cb4a58269f8&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2022-10-14T08%3A49%3A33Z&ske=2022-10-21T08%3A49%3A33Z&sks=b&skv=2021-08-06&sig=Z1OHYUx9EYnHCvJu87%2B802wda6c%2BkmP11WfUeKIRjyY%3D"},"task_id":"task-ZO7nOIr7x1uaNJ3aDzm9T5Hb","prompt_id":"prompt-zOy14wn8xv50G8WCwXfq76Vz","is_public":false},{"id":"generation-XOXaX4vvPYfDuqd2GDcRiLwC","object":"generation","created":1665753022,"generation_type":"ImageGeneration","generation":{"image_path":"https://openailabsprodscus.blob.core.windows.net/private/user-jUu7fCE5KYKhGHCL5HWVPj6M/generations/generation-XOXaX4vvPYfDuqd2GDcRiLwC/image.webp?st=2022-10-14T12%3A11%3A26Z&se=2022-10-14T14%3A09%3A26Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/webp&skoid=15f0b47b-a152-4599-9e98-9cb4a58269f8&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2022-10-14T08%3A49%3A33Z&ske=2022-10-21T08%3A49%3A33Z&sks=b&skv=2021-08-06&sig=Sp7relmnho3H5PPgPDF3eZqWr%2BG23rsc7NoNWv9ElRU%3D"},"task_id":"task-ZO7nOIr7x1uaNJ3aDzm9T5Hb","prompt_id":"prompt-zOy14wn8xv50G8WCwXfq76Vz","is_public":false}]'
+        generations = json.loads(j)
         out = map(lambda x : x["generation"]["image_path"], generations)
         return Response(list(out), status=status.HTTP_200_OK)
 

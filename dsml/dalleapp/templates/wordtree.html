@@ -21,34 +21,26 @@
     <div id="wt"></div>  
      
 </div>
-<div class="row mt-3 justify-content-md-center">
-    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="true">
-        <div class="carousel-indicators">
-          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
-        </div>
-        <div class="carousel-inner">
-          <div class="carousel-item active">
-            <img src="https://via.placeholder.com/350x150" class="d-block w-100" alt="...">
+<div class="row mt-3 justify-content-md-center " >
+    <div class="card d-none" id="carousel-container">
+        <div id="carouselImage" class="carousel carousel-dark " data-bs-ride="true">
+            <div class="carousel-indicators">
+            </div>
+            <div class="carousel-inner">
+              
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselImage" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselImage" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
           </div>
-          <div class="carousel-item">
-            <img src="https://via.placeholder.com/350x150" class="d-block w-100" alt="...">
-          </div>
-          <div class="carousel-item">
-            <img src="https://via.placeholder.com/350x150" class="d-block w-100" alt="...">
-          </div>
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Next</span>
-        </button>
-      </div>
-     
+         
+    </div>
+   
 </div> 
      
 </div>
@@ -64,6 +56,7 @@
 
    function summary(){
     startSpinner();
+    $('#extract').addClass("disabled");
     var text = $("#text").val();
     $.get(summaryApiURL, { text:text }, function(data){
         $("#text").val(data);
@@ -71,7 +64,8 @@
     });
    }
    function initWordTree() {
-
+        $('#carousel-container').addClass("d-none");
+       
         var arr = [
             ['Phrases']
         ];
@@ -93,6 +87,7 @@
         function selectHandler() {
             checkEnableExtractPhrase();
         }
+        checkEnableExtractPhrase();
     }
 
     function checkEnableExtractPhrase() {
@@ -105,7 +100,23 @@
      var text = extractPhrase();
      startSpinner();
      $.get(dalleApiURL, { text:text }, function(data){
-        $("#text").val(data);
+        var images=data;
+        var i=0;
+        $('#carousel-container').removeClass("d-none");
+        $('#carousel-container #carouselImage .carousel-indicators').empty();
+        $('#carousel-container #carouselImage .carousel-inner').empty();
+        $(data).each(function(){
+            
+            var btn=$('<button type="button" data-bs-target="#carouselImage" data-bs-slide-to="'+i+'" aria-current="true" aria-label=""></button>');
+            var image=$('<div class="carousel-item"><img src="'+this+'" ></div>');
+            if(i==0){
+                btn.addClass("active");
+                image.addClass("active");
+            }
+            $('#carousel-container #carouselImage .carousel-indicators').append(btn);
+            $('#carousel-container #carouselImage .carousel-inner').append(image);
+            i++;
+        });
         stopSpinner();
     });
     
