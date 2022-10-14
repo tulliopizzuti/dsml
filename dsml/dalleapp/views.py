@@ -11,6 +11,7 @@ from django.shortcuts import get_object_or_404
 
 from nltk.tokenize import word_tokenize
 from transformers import pipeline
+from dalle2 import Dalle2
 
 from django.conf import settings
 
@@ -31,8 +32,8 @@ def index(req):
 
 def wordtree(req):
     text=req.GET.get("text")
-    print(text)
-    return render(req, 'wordtree.html', {"text":text})
+    
+    return render(req, 'wordtree.html', {"text":"" if text is None else text})
 
 
 def texts(req):
@@ -47,10 +48,17 @@ class SummaryApiView(APIView):
         )
         wordCount=len(word_tokenize(text))
         maxLen=int((wordCount/4)*3)
-        print(maxLen)
         summ = summarizer(text, min_length=1, max_length=maxLen)
         out = summ[0]["summary_text"]
         return Response(out, status=status.HTTP_200_OK)
+
+
+class Dalle2ApiView(APIView):
+    def get(self, request, id=None):
+        text = request.query_params.get("text")
+        dalle = Dalle2("sess-m5P8qcas7Sv7A5vq2OiAvw9iJmmpW99IdMv5q0kB") 
+        generations = dalle.generate(text)
+        return Response(generations, status=status.HTTP_200_OK)
 
 class TextListApiView(APIView):
 

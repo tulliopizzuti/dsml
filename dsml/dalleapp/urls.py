@@ -10,6 +10,7 @@ urlpatterns=[
     path('texts/api', views.TextListApiView.as_view()),
     path('texts/api/<int:id>', views.TextListApiView.as_view()),
     path('api/summary', views.SummaryApiView.as_view()),
+    path('api/dalle', views.Dalle2ApiView.as_view()),
     path('wordtree',views.wordtree,name='wordtree'),
 
 
