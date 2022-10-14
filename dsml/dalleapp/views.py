@@ -21,7 +21,7 @@ import json
 model_name = "facebook/bart-large-cnn"
 #https://huggingface.co/models?pipeline_tag=summarization&sort=downloads
 #https://huggingface.co/docs/transformers/v4.21.0/en/main_classes/pipelines#transformers.SummarizationPipeline
-#summarizer = pipeline("summarization", model=model_name)
+summarizer = pipeline("summarization", model=model_name)
 
 
 # Create your views here.
