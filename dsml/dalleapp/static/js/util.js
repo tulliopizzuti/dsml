@@ -1,10 +1,25 @@
 function startSpinner(selector){
-    var spinnerHtml='<div class="spinner-container text-center m-5""> <div class="spinner-border text-success" role="status"> <span class="visually-hidden">Loading...</span> </div></div>';
-    $(selector).children().addClass("d-none")
-    $(selector).prepend($(spinnerHtml));
+    var spinnerHtml='<div class="spinner-container text-center m-5""> <div style="width: 3rem; height: 3rem;" class="spinner-grow text-primary" role="status"> <span class="visually-hidden">Loading...</span> </div></div>';
+    var overlay='<div id="overlay" class="d-flex align-items-center justify-content-center"></div>';
+
+    if(selector){
+        $(selector).children().addClass("d-none");
+        $(selector).prepend($(spinnerHtml));
+    }
+    else{
+        $("body").prepend($(overlay));
+        $("#overlay").append(spinnerHtml);
+    }
+    
 }
 function stopSpinner(selector){
-    $(selector+" .spinner-container").remove();
-    $(selector+ " .d-none").removeClass("d-none")
+    if(selector){
+        $(selector+" .spinner-container").remove();
+        $(selector+ " .d-none").removeClass("d-none");
+    }
+    else{
+        $("#overlay").remove();
+    }
+
 
 }
