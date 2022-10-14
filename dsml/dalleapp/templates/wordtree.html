@@ -11,7 +11,7 @@
         <label for="text">Text</label>
       </div>
     <div class="col text-end">
-        <button type="button" class="btn btn-primary">Summary</button>
+        <button type="button" class="btn btn-primary" onclick="summary()">Summary</button>
         <button type="button" class="btn btn-primary">WordTree</button>
     </div>
 </form>
@@ -22,8 +22,12 @@
 {% endblock %}
 {% block footer %}
 <script type="text/javascript">
+    var summaryApiURL = "/api/summary";
    function summary(){
-
+    var text = $("#text").val();
+    $.get(summaryApiURL, { text:text }, function(data){
+        $("#text").val(data);
+    });
    }
 </script>
 {% endblock %}
