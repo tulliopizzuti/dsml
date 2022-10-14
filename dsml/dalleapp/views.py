@@ -20,7 +20,7 @@ import os
 model_name = "facebook/bart-large-cnn"
 #https://huggingface.co/models?pipeline_tag=summarization&sort=downloads
 #https://huggingface.co/docs/transformers/v4.21.0/en/main_classes/pipelines#transformers.SummarizationPipeline
-summarizer = pipeline("summarization", model=model_name)
+#summarizer = pipeline("summarization", model=model_name)
 
 
 # Create your views here.
@@ -58,7 +58,8 @@ class Dalle2ApiView(APIView):
         text = request.query_params.get("text")
         dalle = Dalle2("sess-m5P8qcas7Sv7A5vq2OiAvw9iJmmpW99IdMv5q0kB") 
         generations = dalle.generate(text)
-        return Response(generations, status=status.HTTP_200_OK)
+        out = map(lambda x : x["generation"]["image_path"], generations)
+        return Response(list(out), status=status.HTTP_200_OK)
 
 class TextListApiView(APIView):
 

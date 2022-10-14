@@ -12,22 +12,120 @@
       </div>
     <div class="col text-end">
         <button type="button" class="btn btn-primary" onclick="summary()">Summary</button>
-        <button type="button" class="btn btn-primary">WordTree</button>
+        <button type="button" class="btn btn-primary" onclick="initWordTree()">WordTree</button>
+        <a class="btn btn-primary disabled" id="extract" onclick="generateImage()">Generate Image</a>
     </div>
 </form>
 <hr />
 <div class="row mt-3 justify-content-md-center">
-    <div id="spinner"></div>   
+    <div id="wt"></div>  
+     
+</div>
+<div class="row mt-3 justify-content-md-center">
+    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="true">
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="https://via.placeholder.com/350x150" class="d-block w-100" alt="...">
+          </div>
+          <div class="carousel-item">
+            <img src="https://via.placeholder.com/350x150" class="d-block w-100" alt="...">
+          </div>
+          <div class="carousel-item">
+            <img src="https://via.placeholder.com/350x150" class="d-block w-100" alt="...">
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+     
+</div> 
+     
 </div>
 {% endblock %}
 {% block footer %}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
     var summaryApiURL = "/api/summary";
+    var dalleApiURL = "/api/dalle";
+    google.charts.load('current', { packages: ['wordtree'] });
+    var wtData;
+    var chart;
+
    function summary(){
+    startSpinner();
     var text = $("#text").val();
     $.get(summaryApiURL, { text:text }, function(data){
         $("#text").val(data);
+        stopSpinner();
     });
    }
+   function initWordTree() {
+
+        var arr = [
+            ['Phrases']
+        ];
+        var text = $("#text").val();
+        arr.push([text]);
+        wtData = google.visualization.arrayToDataTable(arr);
+        var options = {
+            wordtree: {
+                type: $('#double').prop("checked") ? 'double' : 'suffix',
+                format: 'implicit',
+                word: $('#keyword').val(),
+                wordSeparator:/([!?,;:.&"-]+|\S*[A-Z]\.|\S*(?:[^:\s&-]))/
+            }
+        };
+        chart = new google.visualization.WordTree(document.getElementById('wt'));
+        chart.draw(wtData, options);
+        google.visualization.events.addListener(chart, 'select', selectHandler);
+
+        function selectHandler() {
+            checkEnableExtractPhrase();
+        }
+    }
+
+    function checkEnableExtractPhrase() {
+        $('#extract').addClass("disabled");
+        if ($('#wt path').length <= 0) {
+            $('#extract').removeClass("disabled");
+        }
+    }
+    function generateImage(){
+     var text = extractPhrase();
+     startSpinner();
+     $.get(dalleApiURL, { text:text }, function(data){
+        $("#text").val(data);
+        stopSpinner();
+    });
+    
+        
+    }
+    function extractPhrase() {
+        var text = $('#wt text')
+            .map(function () {
+                return {
+                    x: $(this).attr("x"),
+                    text: $(this).text()
+                }
+            })
+            .sort(function (a, b) {
+                return a.x - b.x;
+            })
+            .map(function () { return this.text });
+        text=(text.toArray().join(" "));
+        return text;
+    }
+
 </script>
 {% endblock %}
