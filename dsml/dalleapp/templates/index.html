@@ -11,16 +11,16 @@
 <section class="section">
     <div class="card">
         <div class="card-header">
-            <h4 class="card-title d-inline-block">Artisti</h4>
-            <a class="btn btn-primary d-inline-block float-end" onClick="insertNewText()">Inserisci</a>
+            <h4 class="card-title d-inline-block">Texts</h4>
+            <a class="btn btn-primary d-inline-block float-end" onClick="insertNewText()">Create</a>
             <hr />
             <div class="row justify-content-end mt-1">
                 <div class="col-4">
                     <div class="form-group">
                         <label>Filtro</label>
                         <select class="form-select" id="tablefield_select">
-                            <option value="descrizione">Descrizione</option>
-                            <option value="testo">Testo</option>
+                            <option value="descrizione">Description</option>
+                            <option value="testo">Text</option>
                         </select>
                     </div>
                 </div>
@@ -31,6 +31,32 @@
             <table class="table" id="table" class="display responsive nowrap" style="width:100%">
 
             </table>
+        </div>
+    </div>
+    <div class="card mt-5">
+        <div class="card-header">
+            <h4 class="card-title d-inline-block">Settings</h4>
+            <a class="btn btn-primary d-inline-block float-end" onClick="updateSettings()">Update</a>
+        </div>
+        <div class="card-body">
+            <form id="settings-form">
+                <div class="row">
+                    <div class="col">
+                        <label for="settings-openaik" class="col-form-label">OpenAI Session Key</label>
+                        <input type="text" required class="form-control" id="settings-openaik" value="{{ settings.openaiSessK }}">
+                    </div>
+                    <div class="col">
+                        <label for="settings-nimage" class="col-form-label">Image generate (% 4)</label>
+                        <input type="number" required class="form-control" id="settings-nimage" value="{{ settings.nImages }}">
+                    </div>
+                    <div class="col">
+                        <label for="settings-summarization" class="col-form-label">Summarization model</label>
+                        <input type="text" required class="form-control" id="settings-summarization" value="{{ settings.summaryModel }}">
+                    </div>
+                  </div>
+
+                
+            </form>
         </div>
     </div>
 </section>
@@ -72,9 +98,34 @@
 <script src="{% static 'js/table.js' %}"></script>
 <script type="text/javascript">
     var url = "/texts/api";
+    var settingsUrl = "/settings/api";
 
     var table;
     var modalSpinnerSelector = "#modaltext .modal-body-container";
+
+    function updateSettings(){
+        startSpinner();
+        var openAiK = $('#settings-openaik').val();
+        var nImages = $('#settings-nimage').val();
+        var summarization = $('#settings-summarization').val();
+        $.post(settingsUrl, { "summaryModel": summarization, "openaiSessK": openAiK, "nImages": nImages  }).done(function (data) {
+            stopSpinner();
+            Swal.fire(
+                'Good job!',
+                'Success!',
+                'success'
+            )
+            reloadTable();
+        }).fail(function (data) {
+            stopSpinner(modalSpinnerSelector);
+            Swal.fire(
+                'Oops...!',
+                'Something went wrong!',
+                'error'
+            )
+        });
+    }
+
     function loadTextData(id) {
         startSpinner(modalSpinnerSelector);
         $('#modaltext').modal('show');

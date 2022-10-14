@@ -12,6 +12,6 @@ urlpatterns=[
     path('api/summary', views.SummaryApiView.as_view()),
     path('api/dalle', views.Dalle2ApiView.as_view()),
     path('wordtree',views.wordtree,name='wordtree'),
-
+    path('settings/api', views.SettingsApiView.as_view())
 
 ]
