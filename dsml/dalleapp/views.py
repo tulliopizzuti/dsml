@@ -1,3 +1,4 @@
+from distutils.log import Log
 from lib2to3.pgen2.tokenize import tokenize
 from django.shortcuts import render
 from .models import Text
@@ -29,12 +30,27 @@ def index(req):
 
 
 def wordtree(req):
-    return render(req, 'wordtree.html')
+    text=req.GET.get("text")
+    print(text)
+    return render(req, 'wordtree.html', {"text":text})
 
 
 def texts(req):
     return render(req, 'texts.html')
 
+class SummaryApiView(APIView):
+    def get(self, request, id=None):
+        text = request.query_params.get("text")
+        summarizer = pipeline(
+                "summarization",
+                model=model_name
+        )
+        wordCount=len(word_tokenize(text))
+        maxLen=int((wordCount/4)*3)
+        print(maxLen)
+        summ = summarizer(text, min_length=1, max_length=maxLen)
+        out = summ[0]["summary_text"]
+        return Response(out, status=status.HTTP_200_OK)
 
 class TextListApiView(APIView):
 
