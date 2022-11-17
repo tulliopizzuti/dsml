@@ -11,7 +11,7 @@ Otherwise you can use pip to install the packages as follows:
       pip install django
       pip install djangorestframework
       pip install nltk
-      pip install tranformers
+      pip install transformers
       pip install dalle2
 
 

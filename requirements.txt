@@ -1,5 +1,5 @@
 django
 djangorestframework
 nltk
-tranformers
+transformers
 dalle2
